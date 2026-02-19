@@ -1,8 +1,17 @@
 import { useGSAP } from '@gsap/react'
 import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
+import { useRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 const Hero = () => {
+
+  const videoRef = useRef(null);
+
+
+  const isMobile = useMediaQuery({
+    query: '(max-width: 768px)'
+  })
 
   useGSAP(()=>{
     const heroSplit = new SplitText('.title', {type:'words, chars'});
@@ -32,15 +41,33 @@ const Hero = () => {
         trigger: '#hero',
         start: 'top top',//top of hero to top of screen
         end: 'bottom top',//bottom of hero to top of screen
-        scrub: 3,
+        scrub: true,
         // pin: true,
         // pinSpacing: false,
       }
     }).to('.right-leaf', {y:200} , 0)//move right leaf
     .to('.left-leaf', {y:-200} , 0)
 
+    const startValue=isMobile ? 'top 50%': 'center 60%'
+    const endValue= isMobile ? '120% top':'bottom top'
 
 
+    const tl= gsap.timeline({
+      scrollTrigger:{
+        trigger:'video',
+        start:startValue,
+        end:endValue,
+        scrub:true,
+        pin:true,
+      }
+    });
+
+
+   videoRef.current.onloadedmetadata = () => {
+	 tl.to(videoRef.current, {
+		currentTime: videoRef.current.duration,
+	 });
+	};
   },[])
 
 
@@ -82,6 +109,10 @@ const Hero = () => {
 		 </div>
 		</div>
 	 </section>
+
+   <div className='video absolute inset-0'>
+    <video src="/videos/output.mp4" muted playsInline preload='auto' ref={videoRef} />
+   </div>
     </>
   )
 }
