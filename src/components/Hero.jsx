@@ -52,7 +52,7 @@ const Hero = () => {
     const endValue= isMobile ? '120% top':'bottom top'
 
 
-    const tl= gsap.timeline({
+    const tl= gsap.timeline({ 
       scrollTrigger:{
         trigger:'video',
         start:startValue,
